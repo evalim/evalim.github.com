@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[石头的博客]]></title>
-  <link href="http://evalim.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: 笔记 | 石头的博客]]></title>
+  <link href="http://evalim.github.io/blog/categories/bi-ji/atom.xml" rel="self"/>
   <link href="http://evalim.github.io/"/>
   <updated>2013-08-11T17:57:09+08:00</updated>
   <id>http://evalim.github.io/</id>
@@ -12,87 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[用贝塞尔曲线绘制圆形]]></title>
-    <link href="http://evalim.github.io/blog/2013/08/11/circle-and-bezier-curves/"/>
-    <updated>2013-08-11T10:49:00+08:00</updated>
-    <id>http://evalim.github.io/blog/2013/08/11/circle-and-bezier-curves</id>
-    <content type="html"><![CDATA[<p>原文：<a href="http://www.whizkidtech.redprince.net/bezier/circle/">Drawing a circle with Bezier Curves</a><br />
-作者：G. Adam Stanislav<br />
-翻译：<a href="http://weibo.com/sgzwbo">GZShi</a><br />
-时间：2013/8/8 22:33</p>
-
-<h3 id="section">引言</h3>
-<p>如果你一直坚定不移地认为<a href="http://zh.wikipedia.org/wiki/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A">贝塞尔曲线</a>不可能完美地绘制圆形，嗯……你的观点是对的。<br />
-幸运的是，人的眼睛能够辨别的“完美圆形”并不一定需要真的很完美才行。<br />
-所以，虽然使用贝塞尔曲线不能完美地绘制一个圆形，但拟合的结果却可以非常接近这个完美的圆。  </p>
-
-<h3 id="section-1">为什么使用贝塞尔曲线绘制圆形？</h3>
-<p>这个问题提得非常好。在你可以使用图形库绘制一个圆形的时候，为什么还一定要用贝塞尔曲线去绘制呢？<br />
-答案非常简单：因为有时候你没有这样一个图形库可用。假设你在设计一款 <a href="http://en.wikipedia.org/wiki/PostScript_fonts">PostScript</a> 字体，可以使用的绘图工具也仅仅是几个基本的图元：你可以绘制直线，也可以绘制曲线。在这样的情况下，贝塞尔曲线无疑是一个更合适的选择。<br />
-<!-- more --> 
-### 学习资源<br />
-有关详细解释如何使用贝塞尔曲线拟合圆形的计算机文献真是少的可怜。在我学习计算机图形学的那些年，我仅仅看过一本与此相关的书。而且里面记录的还是一个错误的方法。<br />
-然而，有人会说，那些商业化的绘图程序能够将 PostScript 字体以图形的形式输出，其中的细节都很完美呀。是这样的。但是出于某些原因，他们似乎不太想让别人知道他们的实现方法。<br />
-几年前，我决定用所了解的基本几何学原理和计算机排版技术去解决这个困扰我很久的疑惑。在我解决了这个疑惑后，我把解决方法公布在了一个论坛小组里（Laserpub）。<br />
-后来，很多人对我提供的方法表示感谢，但是知道这个方法的人似乎仅仅是那些阅读过这篇帖子的少数人。<br />
-基于以上原因，我决定把我的解决方法发布到互联网上。  </p>
-
-<h3 id="section-2">分析</h3>
-<p>让我们回顾一下圆的一些基本属性：<br />
-在一个平面上，到一个中心点距离相等的所有点的集合称为一个圆。如果用一条经过中心点的垂线划过圆形，将会把圆形分为两个对称的半圆。用过圆心的横线同样也可以达到相同效果。<br />
-如果同时使用上述两条线划过圆形，圆将会被分为四个部分，四个部分两两对称。<br />
-这意味着，如果我们能找到一个方法绘制这四部分中的其中一个部分，其它部分自然迎刃而解。<br />
-如果我们在垂线与水平线和圆周相交的地方绘制圆的切线，这些切线也是垂直或水平的。<br />
-使用贝塞尔曲线拟合这四个象限中的任何一个，我们需要一条由一个起点、一个终点和两个控制点组成的曲线。这条曲线需要满足下面的条件：如果将起点和最近的控制点连接，终点和最近的控制点连接，将会得到两条线段——一条垂直线，一条水平线（具体取决于选取的象限）且两条线段的长度相同，都是 l 。  </p>
-
-<p><img src="http://evalim.github.io/images/blog/20130811_bezier.png" alt="image" />  </p>
-
-<p>有无穷多条曲线拥有上述属性（至少理论上我们能找到无穷多个长度为 l 的线段可以使用）。但是没有一条能够绘制出一个完美的圆。</p>
-
-<h3 id="section-3">解决方法</h3>
-<p>在引言中我就已经说到，我们不能绘制出一个完美的圆，但是拟合一个近似完美的圆是可行的。其中的要点就是找到一个合适的 l 。这个 l 是因圆而异的，与圆的半径 r 有关。这不是一个大问题。我们只需要找出 r = 1 这种特殊情况下的 l 即可。这个结果是一个常数，我们把它称为 κ （希腊单词 kyklos 的首字母）。<br />
-只要我们找到这个 κ ，也就是当 r = 1 时对应圆的 l 值，我们就能用下面公式去获得拟合任意圆所需要的 l ：  </p>
-
-<script type="math/tex; mode=display">
-l = r * κ
-</script>
-
-<h3 id="section-4">正确的 κ 值</h3>
-<p>使用正确的 κ 将能绘制出一条非常接近四分之一圆的曲线。如果我们使用刚刚讨论到的性质去绘制一条曲线，并且这条曲线的中心点和圆心重合，那么我们能够获得一条跟实际圆形非常近似的四分之一圆。这就是我的结论。<br />
-我不打算去介绍正确的 κ 值复杂的推理过程，我会直接告诉你结果：  </p>
-
-<script type="math/tex; mode=display">
-κ = 0.5522847498  
-</script>
-
-<h3 id="section-5">速记 1-2-3-4</h3>
-<p>κ 是一个非常难记的无理数，幸运的是，你不需要花时间去记住它，也不用每次需要用到的时候都到这里来翻阅。κ 的计算公式非擦汗那个简单：<br />
-<strong>口诀：负1加根号2除以3然后乘4</strong>  </p>
-
-<script type="math/tex; mode=display">
-κ = 4\frac{\sqrt{2}-1}{3}  
-</script>
-
-<h3 id="section-6">总结</h3>
-<p>使用贝塞尔曲线绘制一个几乎完美的圆，需要分别绘制四条曲线，每条曲线的起点与最近的控制点构成的线段和终点与最近的控制点连接起来的线段分别是垂线和水平线。两条线段的长度是圆的半径和 κ 的乘积。<br />
-要绘制一个椭圆的话，方法类似。不同点是你需要两条不同的半径，你需要用 κ 分别与半径相乘，得到的结果作为与该条半径平行的控制线段的长度值。如果椭圆的半径不是水平或垂直的，你需要用计算机图形学手册（特别是 Michael Mortenson 的<a href="http://www.amazon.com/exec/obidos/ASIN/0831130571/whizkidtechnomag">Geometric Transformation</a>上提供的方法做旋转变换得到最终的椭圆。  </p>
-
-<h3 id="section-7">练习题</h3>
-<p>如何使用贝塞尔曲线和 κ 绘制正弦曲线？  </p>
-
-<h3 id="section-8">源代码</h3>
-<p>如果你需要用自己的电脑软件计算 κ ，你可以从<a href="ftp://whizkidtech.redprince.net/asm/">我的 FTP 服务器</a>下载我的汇编代码。你可以用 NASM 运行它，其中包含了一个预置的用于32位 Windows 和 其它 Unix 的目标文件。其中也包含了用 stdout 输出 κ 值的简单 C 代码。我在 Windows 和 FreeBSD 下分别用 MSVC 和 GCC 编译器进行了测试。  </p>
-
-<h3 id="section-9">数学知识</h3>
-<p>如果你想知道更多关于计算 κ 的数学理论，请阅读<a href="http://www.whizkidtech.redprince.net/bezier/circle/kappa">这里</a>。  </p>
-
-<h3 id="section-10">更多资源</h3>
-<p>更多关于圆的绘制资料，请点击<a href="http://www.tinaja.com/cubic01.html">这里</a>，感谢 <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#105;&#122;&#117;&#109;&#105;&#064;&#112;&#105;&#110;&#111;&#107;&#111;&#046;&#098;&#101;&#114;&#107;&#101;&#108;&#101;&#121;&#046;&#101;&#100;&#117;">Izumi Ohzawa</a> 告诉我这个链接。</p>
-
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[用双眼识别条形码]]></title>
@@ -108,12 +27,12 @@ EAN-13的每一位数字都有特定含义，但是我不打算去细究这些�
 #### 更细基本单位<br />
 条形码的可读范围从最左边的第一条黑条开始，一直到最右边的黑条。仔细看你会发现最左和最右的黑条是最细的，再仔细看你又会发现中间的那些宽一点的黑条只会是最左边黑条的2倍、3倍或4倍宽。如果把最左黑条旁边的白色空隙看做白条，你会发现这一条白条和最细的黑条一样宽，而且是所有白条中最细的，中间的宽一点的白条都是这条白条的2倍、3倍或4倍。如果你发现某个条形码最宽的黑条/白条比最窄的黑条/白条宽4倍以上，那么这个条形码一定是错误的或者被篡改了。<br />
 且将最窄的黑条记为<code>1</code>，最窄的白条记为<code>0</code>，那么如下图所示的条形码就可以记为<code>1010011101</code><br />
-<img src="http://evalim.github.io/images/blog/2013043001.png" alt="barcode" /><br />
+<img src="/images/blog/2013043001.png" alt="barcode" /><br />
 如果你的眼睛足够犀利，那么任何黑白交错的条形码都能被你的双眼转换为类似上面的<code>01</code>串，这正是识别条形码的基础，有了这些<code>01</code>串，就可已进入下一步识别步骤了，不过在进入下一步之前，请再仔细观察一下条形码。<br />
 条形码最左边的3条（101）、最右边的三条、和中间的5条（01010）都会比其它的条形要长一点，这三个区域叫做这个二维码的护线，二维码的数据位或校验位的信息并不会记录在这3个区域当中，他们存在的作用仅仅是告诉识别机器它们是这段条形码的开始、中间和结束部分，并且他们的黑条和白条是最窄的，是其它条形宽度的参考。<br />
 #### 数据组成<br />
 擦亮大家的双眼，一起来把下面的条形码翻译成<code>01</code>串，其中护线和数据位可以稍微留一点空白便于区分<br />
-<img src="http://evalim.github.io/images/blog/2013043002.png" alt="barcode" /><br />
+<img src="/images/blog/2013043002.png" alt="barcode" /><br />
 我的得到的结果是：<br />
 <code>101</code><br />
 <code>011101100010010010001001100100110110011001</code><br />
@@ -165,10 +84,10 @@ EAN-13的每一位数字都有特定含义，但是我不打算去细究这些�
 
 <h3 id="section-1">生成条形码</h3>
 <p>知道了EAN-13的规则，就可以动手写一个生成条形码的应用了。输入一个12位（不含校验的情况）或13位数字，就能生成相应的条形码：<br />
-&lt;div style=&#8217;background:rgba(133, 133, 133, 0.1); margin:0 auto&#8217;&gt;
+&lt;div style='background:rgba(133, 133, 133, 0.1); margin:0 auto'&gt;
 	<span>输入12位或13位数字：</span>
 	<input type="text" value="978712118184" id="in" />
-	&lt;button onclick=&#8217;create()&#8217;&gt;Create&lt;/button&gt;<br />
+	&lt;button onclick='create()'&gt;Create&lt;/button&gt;<br />
 	<canvas id="c" width="400px" height="300px" />
 	<script>
 // 左边的规则

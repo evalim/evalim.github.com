@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://blog.eval.im/sitemap.xml 
+Sitemap: http://evalim.github.io/sitemap.xml 
