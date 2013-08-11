@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[石头的博客]]></title>
+  <link href="http://blog.eval.im/atom.xml" rel="self"/>
+  <link href="http://blog.eval.im/"/>
+  <updated>2013-08-11T17:35:33+08:00</updated>
+  <id>http://blog.eval.im/</id>
+  <author>
+    <name><![CDATA[GZShi]]></name>
+    <email><![CDATA[shgzone@qq.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[tt]]></title>
+    <link href="http://blog.eval.im/blog/2013/08/11/tt/"/>
+    <updated>2013-08-11T17:25:00+08:00</updated>
+    <id>http://blog.eval.im/blog/2013/08/11/tt</id>
+    <content type="html"><![CDATA[<p>wahaha中文</p>
+]]></content>
+  </entry>
+  
+</feed>
