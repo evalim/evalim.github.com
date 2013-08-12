@@ -28,25 +28,15 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
+
+  <!--- MathJax Configuration -->
+  <script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,http://drz.ac/javascripts/MathJaxLocal.js">
+  </script>
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      jax: ["input/TeX", "output/HTML-CSS"],
-      tex2jax: {
-        inlineMath: [ ['$', '$'], ["\\(", "\\)"] ],
-        displayMath: [ ['$$', '$$'], ["\\[", "\\]"] ],
-        processEscapes: true,
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-      //,
-      //displayAlign: "left",
-      //displayIndent: "2em"
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -150,50 +140,55 @@
 上面的每一个部分都只表示一个数字。按照这个规则上面刚好只有12个数，和之前所说的13个数字有偏差。那另外一个数字丢哪里了呢？请继续看下去。<br />
 看看上面的数字，你会发现一个规律，左边的每一个数字都是以<code>0</code>开头、以<code>1</code>结尾，右边的数字则刚好相反。这正是条形码的查错方式之一，如果发现读取的条形码不符合上面规则，那么这个条形码是有错误的。<br />
 接下来将上面的各个待解读的数字分为两类：有奇数个<code>1</code>的奇类、有偶数<code>1</code>的偶类。例如，<code>0111011</code>有奇数个<code>1</code>，<code>0001001</code>有偶数个<code>1</code>。根据这个分类你会发现，左边的部分有一些是奇类有一些是偶类，右边的全是偶类。如果你在读取过程中发现右边的部分中存在奇类，那么这个条形码一定是错误的。<br />
-下面是这些<code>01</code>串和数字的对应规则：
-&gt; 奇类<br />
-&gt; 0001101 -&gt; 0　　0110001 -&gt; 5<br />
-&gt; 0011001 -&gt; 1　　0101111 -&gt; 6<br />
-&gt; 0010011 -&gt; 2　　0111011 -&gt; 7<br />
-&gt; 0111101 -&gt; 3　　0110111 -&gt; 8<br />
-&gt; 0100011 -&gt; 4　　0001011 -&gt; 9  </p>
+下面是这些<code>01</code>串和数字的对应规则：  </p>
 
-<blockquote>
-  <p>偶类<br />
-1110010 -&gt; 0　　1001110 -&gt; 5<br />
-1100110 -&gt; 1　　1010000 -&gt; 6<br />
-1101100 -&gt; 2　　1000100 -&gt; 7<br />
-1000010 -&gt; 3　　1001000 -&gt; 8<br />
-1011100 -&gt; 4　　1110100 -&gt; 9  </p>
-</blockquote>
+<pre><code>奇类  
+0001101 → 0　　0110001 → 5  
+0011001 → 1　　0101111 → 6  
+0010011 → 2　　0111011 → 7  
+0111101 → 3　　0110111 → 8  
+0100011 → 4　　0001011 → 9  
+
+偶类  
+1110010 → 0　　1001110 → 5  
+1100110 → 1　　1010000 → 6  
+1101100 → 2　　1000100 → 7  
+1000010 → 3　　1001000 → 8  
+1011100 → 4　　1110100 → 9  
+</code></pre>
 
 <p>现在可以开始读数字了，左边第一个是<code>0111011</code>，属于奇类，根据对应规则得到的数字是7。左边第二个是<code>0001001</code>，属于偶类，可是找遍所有的偶类规则都不能匹配。还是条形码有问题？还是我们的01串读错了？其实左边的偶类在读取的时候是要逆向读的，也就是说，刚刚的<code>0001001</code>先要转换成<code>1001000</code>然后再去偶类规则里去找对应的数字。现在我们很容易就找到第二个对应数字是8。依次类推，我们把剩下的数字都能读出来，最后的结果应该是<code>787121</code>和<code>181184</code>。<br />
-之前悬着的问题是时候面对了——说好的13个数字呢？！其实这个被遗忘的数字就藏在<code>01</code>串当中，如果把<code>01</code>串左边的部分的奇类看为<code>1</code>，偶类看为<code>0</code>，那么左边会得到一个新的6位串<code>100101</code>，这个串的读取规则如下：<br />
-&gt; 111111 -&gt; 0　　100110 -&gt; 5<br />
-&gt; 110100 -&gt; 1　　100011 -&gt; 6<br />
-&gt; 110010 -&gt; 2　　101010 -&gt; 7<br />
-&gt; 110001 -&gt; 3　　101001 -&gt; 8<br />
-&gt; 101100 -&gt; 4　　100101 -&gt; 9  </p>
+之前悬着的问题是时候面对了——说好的13个数字呢？！其实这个被遗忘的数字就藏在<code>01</code>串当中，如果把<code>01</code>串左边的部分的奇类看为<code>1</code>，偶类看为<code>0</code>，那么左边会得到一个新的6位串<code>100101</code>，这个串的读取规则如下：  </p>
+
+<pre><code>111111 → 0　　100110 → 5  
+110100 → 1　　100011 → 6  
+110010 → 2　　101010 → 7  
+110001 → 3　　101001 → 8  
+101100 → 4　　100101 → 9  
+</code></pre>
 
 <p>根据规则，得到的数字是9。把这个数字和之前读取的数字连起来就是<code>978712118184</code>，掏出手机扫描一下即可验证其是正确的。  </p>
 
 <h3 id="section-4">校验规则</h3>
-<p>条形码有一个非常重要的特点就是防止篡改，这在实际使用中是非常重要的。根据EAN-13规则，<code>978712118184</code>的最后一个数字<code>4</code>是校验位，用于检验前面的数字是否被修改过，具体的检验步骤如下：<br />
-1. 取数据位中的奇数位求和得到S1<br />
-2. 取数据位中的偶数位求和得到S2<br />
-3. S3 = S1 + S2 * 3<br />
-4. M = S3 % 10（取S3的个位数）<br />
-5. C = 10 - M  </p>
+<p>条形码有一个非常重要的特点就是防止篡改，这在实际使用中是非常重要的。根据EAN-13规则，<code>978712118184</code>的最后一个数字<code>4</code>是校验位，用于检验前面的数字是否被修改过，具体的检验步骤如下：  </p>
+
+<pre><code>1. 取数据位中的奇数位求和得到S1  
+2. 取数据位中的偶数位求和得到S2  
+3. S3 = S1 + S2 * 3  
+4. M = S3 % 10（取S3的个位数）  
+5. C = 10 - M  
+</code></pre>
 
 <p>C就是最后的校验结果，这个结果和第13位做比较，如果不同就代表数据有问题。<br />
 结合上面的奇类偶类读取规则不难发现，简单的涂改一定会导致条形码出错的。不过这也是条形码的一个短处所在，如果不经意之间损坏了条形码的结构，哪怕只有一条，都会导致其中的信息完全失效，也就是说条形码没有容错功能。那么有没有既有防篡改又能纠错的条形码呢？答案是肯定的，这个“条形码”叫做“二维码”！  </p>
 
 <h2 id="section-5">生成条形码</h2>
-<p>知道了EAN-13的规则，就可以动手写一个生成条形码的应用了。输入一个12位（不含校验的情况）或13位数字，就能生成相应的条形码：<br />
-&lt;div style=&#8217;background:rgba(133, 133, 133, 0.1); margin:0 auto&#8217;&gt;
+<p>知道了EAN-13的规则，就可以动手写一个生成条形码的应用了。输入一个12位（不含校验的情况）或13位数字，就能生成相应的条形码：  </p>
+
+<div style="background:rgba(133, 133, 133, 0.1); margin:0 auto; padding:1em">
 	<span>输入12位或13位数字：</span>
 	<input type="text" value="978712118184" id="in" />
-	&lt;button onclick=&#8217;create()&#8217;&gt;Create&lt;/button&gt;<br />
+	<button onclick="create()">Create</button><br />
 	<canvas id="c" width="400px" height="300px" />
 	<script>
 // 左边的规则
@@ -207,100 +202,101 @@ function leftCode(number, o) {
 			'0100111', '0110011', '0011011', '0100001', '0011101',
 			'0111001', '0000101', '0010001', '0001001', '0010111'][parseInt(number)%10];
 	}
-}</script></p>
+}
 
-<p>// 右边的规则
+// 右边的规则
 function rightCode(number) {
 	return [
-		‘1110010’, ‘1100110’, ‘1101100’, ‘1000010’, ‘1011100’,
-		‘1001110’, ‘1010000’, ‘1000100’, ‘1001000’, ‘1110100’][parseInt(number)%10];
-}</p>
+		'1110010', '1100110', '1101100', '1000010', '1011100',
+		'1001110', '1010000', '1000100', '1001000', '1110100'][parseInt(number)%10];
+}
 
-<p>// 隐含数字的规则
+// 隐含数字的规则
 function ISBNLeftRule(number) {
 	return [
-		‘111111’, ‘110100’, ‘110010’, ‘110001’, ‘101100’,
-		‘100110’, ‘100011’, ‘101010’, ‘101001’, ‘100101’][parseInt(number)%10];
-}</p>
+		'111111', '110100', '110010', '110001', '101100',
+		'100110', '100011', '101010', '101001', '100101'][parseInt(number)%10];
+}
 
-<p>function createEAN13(series) {
-	var result = ‘101’;
+function createEAN13(series) {
+	var result = '101';
 	var rule = ISBNLeftRule(series[0]);
-	for(var i = 1; i &lt; 7; ++i) {
+	for(var i = 1; i < 7; ++i) {
 		result += leftCode(series[i], rule[i-1]);
 	}
-	result += ‘01010’;
-	for(var i = 7; i &lt; 13; ++i) {
+	result += '01010';
+	for(var i = 7; i < 13; ++i) {
 		result += rightCode(series[i]);
 	}
-	result += ‘101’;
+	result += '101';
 	return result;
-}</p>
+}
 
-<p>// 校验规则
+// 校验规则
 function checkEAN13(series, mode) {
 	var sum = 0;
-	for(var i = 0; i &lt; 6; ++i) {
-		sum += parseInt(series[i<em>2]);
-		sum += parseInt(series[i</em>2 + 1]) * 3;
+	for(var i = 0; i < 6; ++i) {
+		sum += parseInt(series[i*2]);
+		sum += parseInt(series[i*2 + 1]) * 3;
 	}
 	sum = 10 - (sum % 10);
 	if(mode == true)
-		return sum + ‘’;
+		return sum + '';
 	if(parseInt(series[12]) == sum)
 		return true;
 	return false;
-}</p>
+}
 
-<p>function draw(ctx, series) {
+function draw(ctx, series) {
 	ctx.clearRect(0, 0, 1000, 1000);
 	if(series.length == 12) {
 		series = series + checkEAN13(series, true);
 	} else if(checkEAN13(series) == false) {
-		ctx.fillStyle = ‘black’;
-		ctx.fillText(‘check failed!’, 10, 30);
+		ctx.fillStyle = 'black';
+		ctx.fillText('check failed!', 10, 30);
 		return ;
 	}
 	var WIDTH = 4;		// 条码宽度
 	var HEIGHT = 200;	// 条码高度
 	var bc = createEAN13(series);
-	ctx.fillStyle = ‘black’;
-	for(i = 0; i &lt; 3; ++i) {
-		if(bc[i] == ‘1’) {
-			ctx.fillRect(i<em>WIDTH, 20, WIDTH, HEIGHT+25);
-		}
-	}
-	for(; i &lt; 45; ++i) {
-		if(bc[i] == ‘1’) {
-			ctx.fillRect(i</em>WIDTH, 20, WIDTH, HEIGHT);
-		}
-	}
-	for(; i &lt; 50; ++i) {
-		if(bc[i] == ‘1’) {
-			ctx.fillRect(i<em>WIDTH, 20, WIDTH, HEIGHT+25);
-		}
-	}
-	for(; i &lt; 92; ++i) {
-		if(bc[i] == ‘1’) {
-			ctx.fillRect(i</em>WIDTH, 20, WIDTH, HEIGHT);
-		}
-	}
-	for(; i &lt; 95; ++i) {
-		if(bc[i] == ‘1’) {
+	ctx.fillStyle = 'black';
+	for(i = 0; i < 3; ++i) {
+		if(bc[i] == '1') {
 			ctx.fillRect(i*WIDTH, 20, WIDTH, HEIGHT+25);
 		}
 	}
-}</p>
+	for(; i < 45; ++i) {
+		if(bc[i] == '1') {
+			ctx.fillRect(i*WIDTH, 20, WIDTH, HEIGHT);
+		}
+	}
+	for(; i < 50; ++i) {
+		if(bc[i] == '1') {
+			ctx.fillRect(i*WIDTH, 20, WIDTH, HEIGHT+25);
+		}
+	}
+	for(; i < 92; ++i) {
+		if(bc[i] == '1') {
+			ctx.fillRect(i*WIDTH, 20, WIDTH, HEIGHT);
+		}
+	}
+	for(; i < 95; ++i) {
+		if(bc[i] == '1') {
+			ctx.fillRect(i*WIDTH, 20, WIDTH, HEIGHT+25);
+		}
+	}
+}
 
-<p>function create() {
-	var ctx = document.getElementById(‘c’).getContext(‘2d’);
-	var text = document.getElementById(‘in’).value;
+function create() {
+	var ctx = document.getElementById('c').getContext('2d');
+	var text = document.getElementById('in').value;
 	draw(ctx, text);
 }
 create();
-&lt;/script&gt;
-&lt;/div&gt;
-下面是JavaScript代码链接:<br />
+</script>
+</div>
+
+<p>下面是JavaScript代码链接:<br />
 <a href="https://gist.github.com/GZShi/5487022">https://gist.github.com/GZShi/5487022</a></p>
 </div>
 
