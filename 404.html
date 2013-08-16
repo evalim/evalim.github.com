@@ -1,88 +1,68 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Code Rain</title>
+	<title>404 - NOT FOUND!</title>
 	<style type="text/css">
 		@font-face {
 			font-family: matrix;
-			src: url("http://zeroomega.info/matrix/matrix.ttf");	/* thanks :-) */
+			src: url("/font/matrix.ttf");
 		}
-
 		body {
-			background: #0f0f0f;
-			color: #04ee0f;
-			font-family: matrix, 'consolas', 'courier new', 'courier', monospace;
-			font-size: 20px;
-			text-align: center;
-			overflow: hidden
-		}
-
-		div.cloud {
-			width: 20px;
-			float: left;
-		}
-
-		div {
-			margin: 0;
-			padding: 0;
+			background: #111111;
+			color: #eeeeee;
 		}
 	</style>
 </head>
 <body>
-	<script type="text/javascript">
-		var s = window.screen;
-		var xCount = s.width / 10;
-		var yCount = s.height / 15;
-		var code = 'abcdefghijklmnopqrstuvwxyzABCDFGHJKMNQRSTWXZ~!@#$%^&*_'.split('');
-		// var code = '1234567890'.split('');
+	<canvas id='c'>404 - Page NOT FOUND!</canvas>
+	<script>
+		c.width = window.screen.width;
+		c.height = window.screen.height;
+		var ctx = c.getContext('2d');
+			ctx.font = "18pt consolas, monospace";
+		var fontSize = 18;
+		var xCount = c.width / fontSize;
+		var yCount = c.height / fontSize;
+		var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ*#@1234567890'.split('');
 		var clouds = [];
 
-		function addDroplet(cloud) {
-			var fAlpha;
-			if(cloud.firstElementChild) {
-				fAlpha = cloud.firstElementChild.alpha;
-				if(fAlpha < 0.5 && Math.random() > 0.98) {
-					fAlpha = 1;
-				} else {
-					fAlpha -= 0.05;
-					fAlpha = fAlpha < 0 ? 0 : fAlpha;
+		for(var i = 0; i < xCount; ++i) {
+			clouds.push({tick:0, timestep:1+Math.floor(Math.random()*8), droplets:[]});
+		}
+
+		function draw() {
+			ctx.clearRect(0, 0, c.width, c.height);
+
+			for(var i = 0; i < clouds.length; i++) {
+				var cloud = clouds[i];
+				var droplets = cloud.droplets;
+
+				for(var j = 0; j < droplets.length; j++) {
+					if(droplets[j].alpha < 0)	continue;
+					ctx.fillStyle = 'rgba(12, 222, 12, ' + droplets[j].alpha + ')';
+					ctx.fillText(droplets[j].c, i * fontSize, j * fontSize + cloud.tick);
+				}
+
+				cloud.tick += cloud.timestep;
+				if(cloud.tick < fontSize)
+					continue;
+				else {
+					cloud.tick -= fontSize;
+					if(droplets.length < 1) {
+						droplets.unshift({alpha: 1, c: 'A'});
+					} else {
+						droplets.unshift({
+							alpha: (droplets[0].alpha < 0.4 && Math.random() > 0.95) ? 1 : droplets[0].alpha - 0.06, 
+							c: code[Math.floor(Math.random()*code.length)]
+						});
+					}
+					if(droplets.length > yCount)
+						droplets.pop();
 				}
 			}
-			else
-				fAlpha = 1;
-			var newDiv = document.createElement('div');
-				newDiv.innerText = code[Math.floor(Math.random() * code.length)];
-				newDiv.style.color = 'rgba(4, 221, 4, ' + fAlpha + ')';
-				newDiv.alpha = fAlpha;
-				newDiv.class = 'node';
-			cloud.insertBefore(newDiv, cloud.firstElementChild);
 		}
 
-		function createClouds() {
-			var newCloud;
-			for(var i = 0; i < xCount; ++i) {
-				newCloud = document.createElement('div');
-				newCloud.async = true;
-				newCloud.className = 'cloud';
-				for (var j = 0; j < yCount; ++j) {
-					addDroplet(newCloud);
-				}
-				document.body.appendChild(newCloud);
-				clouds.push(newCloud);
-			}
-		}
-
-		function dropRain() {
-			for(var i = 0; i < clouds.length; ++i) {
-				addDroplet(clouds[i]);
-				clouds[i].removeChild(clouds[i].lastElementChild);
-			}
-		}
-
-		createClouds();
-		setInterval(dropRain, 33);
+		setInterval(draw, 15);
 	</script>
 </body>
 </html>
